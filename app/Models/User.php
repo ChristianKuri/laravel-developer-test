@@ -77,6 +77,17 @@ class User extends Authenticatable
     }
 
     /**
+     * Badge that the user has earned.
+     */
+    public function badge()
+    {
+        $totalAchievements = $this->achievements()->count();
+        return Badge::where('threshold', '<=', $totalAchievements)
+            ->orderBy('threshold', 'desc')
+            ->first();
+    }
+
+    /**
      * Mark a lesson as watched.
      */
     public function watch(Lesson $lesson)
