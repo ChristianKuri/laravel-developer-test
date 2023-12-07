@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Events\LessonWatched;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -73,5 +74,15 @@ class User extends Authenticatable
     public function achievements()
     {
         return $this->belongsToMany(Achievement::class);
+    }
+
+    /**
+     * Mark a lesson as watched.
+     */
+    public function watch(Lesson $lesson)
+    {
+        $this->lessons()->attach($lesson->id, ['watched' => true]);
+
+        event(new LessonWatched($lesson, $this));
     }
 }
