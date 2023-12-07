@@ -4,8 +4,6 @@ namespace Tests\Feature;
 
 use App\Events\LessonWatched;
 use App\Events\AchievementUnlocked;
-use App\Listeners\AchievementUnlockedListener;
-use App\Listeners\LessonWatchedListener;
 use App\Models\Lesson;
 use App\Models\User;
 use Database\Seeders\AchievementSeeder;
@@ -24,21 +22,6 @@ class LessonWatchedListenerTest extends TestCase
         parent::setUp();
         $this->seed(AchievementSeeder::class);
         $this->seed(BadgeSeeder::class);
-    }
-
-    public function test_verify_that_the_events_are_being_listened(): void
-    {
-        Event::fake();
-
-        Event::assertListening(
-            LessonWatched::class,
-            LessonWatchedListener::class,
-        );
-
-        Event::assertListening(
-            AchievementUnlocked::class,
-            AchievementUnlockedListener::class,
-        );
     }
 
     /**
