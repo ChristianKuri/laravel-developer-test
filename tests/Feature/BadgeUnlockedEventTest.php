@@ -143,4 +143,132 @@ class BadgeUnlockedEventTest extends TestCase
         // assert that the event BadgeUnlocked was not fired
         Event::assertNotDispatched(BadgeUnlocked::class);
     }
+
+    /**
+     * Test that with 6 achievements the user has the Intermediate badge 
+     */
+    public function test_that_with_six_achievements_the_user_has_the_intermediate_badge(): void
+    {
+        /** Setup */
+        $user = User::factory()->create();
+        $this->watchLessons($user, 50);
+
+        /** Fire Lesson Events */
+        Event::fake([BadgeUnlocked::class]);
+        $user->writeComment();
+
+        /** Asserts */
+        // assert that the user have 6 achievements
+        $this->assertEquals(6, $user->achievements()->count());
+
+        // assert that the user has the Intermediate badge
+        $this->assertEquals('Intermediate', $user->badge()->name);
+
+        // assert that the event BadgeUnlocked was not fired
+        Event::assertNotDispatched(BadgeUnlocked::class);
+    }
+
+    /**
+     * Test that with 7 achievements the user has the Intermediate badge 
+     */
+    public function test_that_with_seven_achievements_the_user_has_the_intermediate_badge(): void
+    {
+        /** Setup */
+        $user = User::factory()->create();
+        $this->watchLessons($user, 50);
+        $this->writeComments($user, 2);
+
+        /** Fire Lesson Events */
+        Event::fake([BadgeUnlocked::class]);
+        $user->writeComment();
+
+        /** Asserts */
+        // assert that the user have 7 achievements
+        $this->assertEquals(7, $user->achievements()->count());
+
+        // assert that the user has the Intermediate badge
+        $this->assertEquals('Intermediate', $user->badge()->name);
+
+        // assert that the event BadgeUnlocked was not fired
+        Event::assertNotDispatched(BadgeUnlocked::class);
+    }
+
+    /**
+     * Test that with 8 achievements the user has the Advanced badge 
+     */
+    public function test_that_with_eight_achievements_the_user_has_the_advanced_badge(): void
+    {
+        /** Setup */
+        $user = User::factory()->create();
+        $this->watchLessons($user, 50);
+        $this->writeComments($user, 4);
+
+        /** Fire Lesson Events */
+        Event::fake([BadgeUnlocked::class]);
+        $user->writeComment();
+
+        /** Asserts */
+        // assert that the user have 8 achievements
+        $this->assertEquals(8, $user->achievements()->count());
+
+        // assert that the user has the Advanced badge
+        $this->assertEquals('Advanced', $user->badge()->name);
+
+        // assert that the event BadgeUnlocked was fired
+        Event::assertDispatched(BadgeUnlocked::class, function ($e) use ($user) {
+            return $e->badge_name === 'Advanced' && $e->user->id === $user->id;
+        });
+    }
+
+    /**
+     * Test that with 9 achievements the user has the Advanced badge 
+     */
+    public function test_that_with_nine_achievements_the_user_has_the_advanced_badge(): void
+    {
+        /** Setup */
+        $user = User::factory()->create();
+        $this->watchLessons($user, 50);
+        $this->writeComments($user, 9);
+
+        /** Fire Lesson Events */
+        Event::fake([BadgeUnlocked::class]);
+        $user->writeComment();
+
+        /** Asserts */
+        // assert that the user have 9 achievements
+        $this->assertEquals(9, $user->achievements()->count());
+
+        // assert that the user has the Advanced badge
+        $this->assertEquals('Advanced', $user->badge()->name);
+
+        // assert that the event BadgeUnlocked was not fired
+        Event::assertNotDispatched(BadgeUnlocked::class);
+    }
+
+    /**
+     * Test that with 10 achievements the user has the Master badge 
+     */
+    public function test_that_with_ten_achievements_the_user_has_the_master_badge(): void
+    {
+        /** Setup */
+        $user = User::factory()->create();
+        $this->watchLessons($user, 50);
+        $this->writeComments($user, 19);
+
+        /** Fire Lesson Events */
+        Event::fake([BadgeUnlocked::class]);
+        $user->writeComment();
+
+        /** Asserts */
+        // assert that the user have 10 achievements
+        $this->assertEquals(10, $user->achievements()->count());
+
+        // assert that the user has the Master badge
+        $this->assertEquals('Master', $user->badge()->name);
+
+        // assert that the event BadgeUnlocked was fired
+        Event::assertDispatched(BadgeUnlocked::class, function ($e) use ($user) {
+            return $e->badge_name === 'Master' && $e->user->id === $user->id;
+        });
+    }
 }

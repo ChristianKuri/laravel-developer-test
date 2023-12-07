@@ -17,4 +17,11 @@ abstract class TestCase extends BaseTestCase
             $user->watch($lesson);
         }
     }
+
+    public function writeComments(User $user, int $count): void
+    {
+        for ($i = 0; $i < $count; $i++) {
+            $user->writeComment();
+        }
+    }
 }

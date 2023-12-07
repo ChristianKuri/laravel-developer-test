@@ -2,9 +2,9 @@
 
 namespace App\Listeners;
 
+use App\Events\AchievementUnlocked;
 use App\Events\CommentWritten;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Models\Achievement;
 
 class CommentWrittenListener
 {
@@ -21,6 +21,18 @@ class CommentWrittenListener
      */
     public function handle(CommentWritten $event): void
     {
-        //
+        $user = $event->comment->user;
+        $commentCount = $user->comments()->count();
+
+        // Check for comment written achievements
+        $achievement = Achievement::where('type', 'comments_written')
+            ->where('threshold', '<=', $commentCount)
+            ->orderBy('threshold', 'desc')
+            ->first();
+
+        if ($achievement && !$user->achievements()->where('achievement_id', $achievement->id)->exists()) {
+            $user->achievements()->attach($achievement->id);
+            event(new AchievementUnlocked($achievement->name, $user));
+        }
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Events\CommentWritten;
 use App\Events\LessonWatched;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -95,5 +97,22 @@ class User extends Authenticatable
         $this->lessons()->attach($lesson->id, ['watched' => true]);
 
         event(new LessonWatched($lesson, $this));
+    }
+
+    /**
+     * Write a comment
+     */
+    public function writeComment(string $body = 'lorem ipsum')
+    {
+        $comment = $this->comments()->create([
+            'body' => $body,
+        ]);
+
+        event(new CommentWritten($comment));
+    }
+
+    public function hasAchievement(string $achievementName): bool
+    {
+        return $this->achievements()->where('name', $achievementName)->exists();
     }
 }
