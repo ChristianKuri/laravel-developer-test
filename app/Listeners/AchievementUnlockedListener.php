@@ -27,7 +27,6 @@ class AchievementUnlockedListener
         $totalAchievements = $user->achievements()->count();
         $badge = Badge::where('threshold', $totalAchievements)
             ->first();
-        dump($totalAchievements);
 
         if ($badge) {
             event(new BadgeUnlocked($badge->name, $user));
